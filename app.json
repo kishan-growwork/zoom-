@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Foodu",
-    "slug": "Foodu",
+    "slug": "zoom-plus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,19 +15,27 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kishangrowwork.zoomplus"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#1BAC4B"
-      }
+      },
+      "package": "com.kishangrowwork.zoomplus"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "75aa0421-9fff-4c2f-a2c0-6430745b7c0e"
+      }
+    },
+    "owner": "kishan-growwork"
   }
 }
