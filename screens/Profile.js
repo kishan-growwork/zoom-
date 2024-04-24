@@ -17,8 +17,12 @@ import { useTheme } from '../theme/ThemeProvider'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import Button from '../components/Button'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { clearStorage } from '../helper'
+import { useDispatch } from 'react-redux'
+import actions from '../redux/auth/actions'
 
 const Profile = ({ navigation }) => {
+    const dispatch = useDispatch()
     const refRBSheet = useRef()
     const { dark, colors, setScheme } = useTheme()
 
@@ -398,9 +402,10 @@ const Profile = ({ navigation }) => {
                         filled
                         style={styles.logoutButton}
                         onPress={() => {
-                            AsyncStorage.removeItem('alreadyLaunched')
-                            refRBSheet.current.close()
-                            navigation.navigate('Onboarding1')
+                            clearStorage()
+                            // // refRBSheet.current.close()
+                            dispatch({ type: actions.LOG_OUT })
+                            // navigation.navigate('Login')
                         }}
                     />
                 </View>

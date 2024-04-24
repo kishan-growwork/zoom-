@@ -43,68 +43,109 @@ const ForgotPasswordEmail = ({ navigation }) => {
   }, [error])
 
   return (
-    <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Header title="Forgot Password" />
-        <ScrollView style={{ marginVertical: 54 }} showsVerticalScrollIndicator={false}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={images.logo}
-              resizeMode='contain'
-              style={styles.logo}
-            />
-          </View>
-          <Text style={[styles.title, {
-            color: dark ? COLORS.white : COLORS.black
-          }]}>Enter to Your Email</Text>
-          <Input
-            id="email"
-            onInputChanged={inputChangedHandler}
-            errorText={formState.inputValidities['email']}
-            placeholder="Email"
-            placeholderTextColor={dark ? COLORS.grayTie : COLORS.black}
-            icon={icons.email}
-            keyboardType="email-address"
-          />
-          <View style={styles.checkBoxContainer}>
-            <View style={{ flexDirection: 'row' }}>
-              <Checkbox
-                style={styles.checkbox}
-                value={isChecked}
-                color={isChecked ? COLORS.primary : dark ? COLORS.primary : "gray"}
-                onValueChange={setChecked}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.privacy, {
-                  color: dark ? COLORS.white : COLORS.black
-                }]}>Remenber me</Text>
+      <SafeAreaView
+          style={[styles.area, { backgroundColor: colors.background }]}
+      >
+          <View
+              style={[styles.container, { backgroundColor: colors.background }]}
+          >
+              <Header title="Forgot Password" />
+              <ScrollView
+                  style={{ marginVertical: 54 }}
+                  showsVerticalScrollIndicator={false}
+              >
+                  <View style={styles.logoContainer}>
+                      <Image
+                          source={images.logo}
+                          resizeMode="contain"
+                          style={styles.logo}
+                      />
+                  </View>
+                  <Text
+                      style={[
+                          styles.title,
+                          {
+                              color: dark ? COLORS.white : COLORS.black,
+                          },
+                      ]}
+                  >
+                      Enter to Your Email
+                  </Text>
+                  <Input
+                      id="email"
+                      onInputChanged={inputChangedHandler}
+                      errorText={formState.inputValidities['email']}
+                      placeholder="Email"
+                      placeholderTextColor={
+                          dark ? COLORS.grayTie : COLORS.black
+                      }
+                      icon={icons.email}
+                      keyboardType="email-address"
+                  />
+                  <View style={styles.checkBoxContainer}>
+                      <View style={{ flexDirection: 'row' }}>
+                          <Checkbox
+                              style={styles.checkbox}
+                              value={isChecked}
+                              color={
+                                  isChecked
+                                      ? COLORS.primary
+                                      : dark
+                                        ? COLORS.primary
+                                        : 'gray'
+                              }
+                              onValueChange={setChecked}
+                          />
+                          <View style={{ flex: 1 }}>
+                              <Text
+                                  style={[
+                                      styles.privacy,
+                                      {
+                                          color: dark
+                                              ? COLORS.white
+                                              : COLORS.black,
+                                      },
+                                  ]}
+                              >
+                                  Remenber me
+                              </Text>
+                          </View>
+                      </View>
+                  </View>
+                  <Button
+                      title="Reset Password"
+                      filled
+                      onPress={() => navigation.navigate('OTPVerification')}
+                      style={styles.button}
+                  />
+                  <TouchableOpacity
+                      onPress={() => navigation.navigate('Login')}
+                  >
+                      <Text style={styles.forgotPasswordBtnText}>
+                          Remenber the password?
+                      </Text>
+                  </TouchableOpacity>
+                  <View></View>
+              </ScrollView>
+              <View style={styles.bottomContainer}>
+                  <Text
+                      style={[
+                          styles.bottomLeft,
+                          {
+                              color: dark ? COLORS.white : COLORS.black,
+                          },
+                      ]}
+                  >
+                      Don't have an account ?
+                  </Text>
+                  <TouchableOpacity
+                      onPress={() => navigation.navigate('Login')}
+                  >
+                      <Text style={styles.bottomRight}>{'  '}Sign Up</Text>
+                  </TouchableOpacity>
               </View>
-            </View>
           </View>
-          <Button
-            title="Reset Password"
-            filled
-            onPress={() => navigation.navigate("OTPVerification")}
-            style={styles.button}
-          />
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Login")}>
-            <Text style={styles.forgotPasswordBtnText}>Remenber the password?</Text>
-          </TouchableOpacity>
-          <View>
-          </View>
-        </ScrollView>
-        <View style={styles.bottomContainer}>
-          <Text style={[styles.bottomLeft, {
-            color: dark ? COLORS.white : COLORS.black
-          }]}>Don't have an account ?</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Signup")}>
-            <Text style={styles.bottomRight}>{"  "}Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
   )
 };
 

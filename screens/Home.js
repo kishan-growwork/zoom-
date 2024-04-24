@@ -7,7 +7,7 @@ import {
     TextInput,
     FlatList,
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { COLORS, SIZES, icons, images } from '../constants'
 import { banners, categories, discountFoods, recommendedFoods } from '../data'
 import { useTheme } from '../theme/ThemeProvider'
@@ -17,14 +17,26 @@ import SubHeaderItem from '../components/SubHeaderItem'
 import Category from '../components/Category'
 import VerticalFoodCard from '../components/VerticalFoodCard'
 import HorizontalFoodCard from '../components/HorizontalFoodCard'
+import { useSelector } from 'react-redux'
 
 const Home = ({ navigation }) => {
+    console.info('----------------------------')
+    console.info('navigation =>', navigation.navigate)
+    console.info('----------------------------')
     const [currentIndex, setCurrentIndex] = useState(0)
     const { dark, colors } = useTheme()
-
+    const { user } = useSelector((state) => state.auth)
+    console.info('----------------------------')
+    console.info('user =>', user)
+    console.info('----------------------------')
     /**
      * render header
      */
+    useEffect(() => {
+        if (user?.isRegistered === false) {
+            navigation.navigate('FillYourProfile')
+        }
+    }, [user])
     const renderHeader = () => {
         return (
             <View style={styles.headerContainer}>
@@ -417,6 +429,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.white,
         padding: 16,
+        marginBottom: 15,
     },
     headerContainer: {
         flexDirection: 'row',
