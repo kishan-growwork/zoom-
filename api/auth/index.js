@@ -5,5 +5,9 @@ export const loginAPI = async (payload) => {
 }
 
 export const verifyOTPAPI = async (payload) => {
-    return await apiCall.post('/user/auth/verifyOtp', payload)
+    return await apiCall.post('user/auth/verifyOtp', payload)
+}
+
+export const registerUserAPI = async (payload) => {
+    return await apiCall.post('user/auth/registerUser', payload)
 }

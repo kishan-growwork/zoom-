@@ -20,9 +20,6 @@ import HorizontalFoodCard from '../components/HorizontalFoodCard'
 import { useSelector } from 'react-redux'
 
 const Home = ({ navigation }) => {
-    console.info('----------------------------')
-    console.info('navigation =>', navigation.navigate)
-    console.info('----------------------------')
     const [currentIndex, setCurrentIndex] = useState(0)
     const { dark, colors } = useTheme()
     const { user } = useSelector((state) => state.auth)
@@ -32,11 +29,7 @@ const Home = ({ navigation }) => {
     /**
      * render header
      */
-    useEffect(() => {
-        if (user?.isRegistered === false) {
-            navigation.navigate('FillYourProfile')
-        }
-    }, [user])
+
     const renderHeader = () => {
         return (
             <View style={styles.headerContainer}>

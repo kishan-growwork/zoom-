@@ -85,6 +85,8 @@ const AppNavigation = () => {
     const [isLoading, setIsLoading] = useState(true)
     const { user } = useSelector((state) => state.auth)
     const [isLogin, setIsLogin] = useState(false)
+
+    const [token, setToken] = useState('')
     useEffect(() => {
         const checkIfFirstLaunch = async () => {
             try {
@@ -105,31 +107,43 @@ const AppNavigation = () => {
         checkIfFirstLaunch()
     }, [])
 
+    const getToken = async () => {
+        const token = await retrieveData('token')
+        setToken(token)
+    }
     useEffect(() => {
-        const token = retrieveData('token')
-        if (user?.isVerified || token?.length > 0) {
+        getToken()
+    }, [])
+
+    useEffect(() => {
+        if (token?.length > 0) {
             setIsLogin(true)
+        } else {
+            if (user?.isVerified == true) {
+                if (user?.isRegistered === false) {
+                    setIsLogin(false)
+                } else {
+                    setIsLogin(true)
+                }
+            } else if (user == null) {
+                setIsLogin(false)
+            }
         }
-        if (user == null) {
-            setIsLogin(false)
-        }
-    }, [user])
+    }, [user, token])
 
     if (isLoading) {
         return null
     }
-    console.info('----------------------------')
-    console.info('isFirstLaunch =>', isFirstLaunch)
-    console.info('----------------------------')
+console.info('----------------------------');
+console.info('isLogin =>', isLogin);
+console.info('----------------------------');
     return (
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
                 // replace the second onboaring1 with login in order to make the user not to see the onboarding
                 // when login the next time
-                initialRouteName={
-                    isFirstLaunch && isLogin == false ? 'Onboarding1' : 'Login'
-                }
+                initialRouteName={isFirstLaunch ? 'Onboarding1' : 'Login'}
             >
                 {!isLogin ? (
                     <>
@@ -169,6 +183,10 @@ const AppNavigation = () => {
                                 name="ForgotPasswordPhoneNumber"
                                 component={ForgotPasswordPhoneNumber}
                             />
+                            <Stack.Screen
+                                name="FillYourProfile"
+                                component={FillYourProfile}
+                            />
                         </Stack.Group>
                     </>
                 ) : (
@@ -187,10 +205,10 @@ const AppNavigation = () => {
                             name="Fingerprint"
                             component={Fingerprint}
                         /> */}
-                        <Stack.Screen
+                        {/* <Stack.Screen
                             name="FillYourProfile"
                             component={FillYourProfile}
-                        />
+                        /> */}
                         <Stack.Group>
                             <Stack.Screen
                                 name="Main"

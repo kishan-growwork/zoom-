@@ -14,14 +14,12 @@ const OTPVerification = ({ navigation }) => {
     const dispatch = useDispatch()
     const [value, setValue] = useState()
     const auth = useSelector((state) => state.auth)
-    console.info('----------------------------')
-    console.info('auth =>', auth)
-    console.info('----------------------------')
-    // useEffect(() => {
-    //     if (auth?.user?.isVerified === false) {
-    //         navigation.navigate('FillYourProfile')
-    //     }
-    // }, [auth?.user?.isVerified])
+
+    useEffect(() => {
+        if (auth?.user?.isRegistered === false) {
+            navigation.navigate('FillYourProfile')
+        }
+    }, [auth?.user?.isVerified])
     const [time, setTime] = useState(59)
     const { colors, dark } = useTheme()
 

@@ -1,16 +1,16 @@
 import axios from 'axios'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import ENV from '../env';
+import ENV from '../env'
 
-let env = String(process.env.REACT_APP_ENVIRONMENT);
-console.info('----------------------------');
-console.info('env =>', env);
-console.info('----------------------------');
+let env = String(process.env.REACT_APP_ENVIRONMENT)
+console.info('----------------------------')
+console.info('env =>', env)
+console.info('----------------------------')
 let SERVER_URL = ENV[env].API_BASE_URL
-console.info('----------------------------');
-console.info('SERVER_URL =>', SERVER_URL);
-console.info('----------------------------');
+console.info('----------------------------')
+console.info('SERVER_URL =>', SERVER_URL)
+console.info('----------------------------')
 let apiCall = axios.create({
     baseURL: SERVER_URL,
     // headers: {
@@ -22,9 +22,13 @@ apiCall.interceptors.request.use(
     async function (req) {
         try {
             const token = await AsyncStorage.getItem('token')
+            console.info('----------------------------')
+            console.info('token =>', token)
+            console.info('----------------------------')
             if (token) {
                 req.headers = {
                     ...req.headers,
+                    Authorization: 'Bearer ' + token,
                     token,
                 }
             }
@@ -42,23 +46,6 @@ apiCall.interceptors.request.use(
 
 apiCall.interceptors.response.use(
     async (resp) => {
-        if (resp?.data?.msg === 'invalid token or expired token') {
-            try {
-                await AsyncStorage.clear()
-            } catch (error) {
-                console.log('Error clearing AsyncStorage:', error)
-            }
-            // Handle removing other persistence mechanisms if any
-        }
-        if (resp?.data?.token) {
-            const token = resp?.data?.token
-            try {
-                await AsyncStorage.setItem('token', token)
-            } catch (error) {
-                console.log('Error saving token to AsyncStorage:', error)
-            }
-            return resp
-        }
         if (resp?.data) {
             return resp.data
         }

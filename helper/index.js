@@ -12,12 +12,9 @@ const retrieveData = async (name) => {
     try {
         const value = await AsyncStorage.getItem(name)
         if (value !== null) {
-            // We have data!!
-            console.log(value)
+            return value
         }
-    } catch (error) {
-        // Error retrieving data
-    }
+    } catch (error) {}
 }
 const clearStorage = async () => {
     try {

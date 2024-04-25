@@ -24,14 +24,23 @@ import { getFormatedDate } from 'react-native-modern-datepicker'
 import DatePickerModal from '../components/DatePickerModal'
 import Button from '../components/Button'
 import { useTheme } from '../theme/ThemeProvider'
+import { useDispatch, useSelector } from 'react-redux'
+import actions from '../redux/auth/actions'
 
 const FillYourProfile = ({ navigation }) => {
+    const dispatch = useDispatch()
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [image, setImage] = useState(null)
-    const [error, setError] = useState()
-
+    const [firstNameError, setFirstNameError] = useState('')
+    const [lastNameError, setLastNameError] = useState('')
+    const [emailError, setEmailError] = useState('')
+    const number = useSelector((state) => state.auth?.user?.mobileNumber)
+    const id = useSelector((state) => state.auth?.user?.id)
+    console.info('----------------------------')
+    console.info('id =>', id)
+    console.info('----------------------------')
     // const [areas, setAreas] = useState([])
     // const [selectedArea, setSelectedArea] = useState(null)
     // const [modalVisible, setModalVisible] = useState(false)
@@ -80,8 +89,50 @@ const FillYourProfile = ({ navigation }) => {
     //         })
     // }, [])
 
-    // render countries codes modal
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return regex.test(email)
+    }
+    const handleSubmit = () => {
+        let isValid = true
 
+        if (!firstName) {
+            setFirstNameError('Please enter First Name')
+            isValid = false
+        } else {
+            setFirstNameError('')
+        }
+
+        if (!lastName) {
+            setLastNameError('Please enter Last Name')
+            isValid = false
+        } else {
+            setLastNameError('')
+        }
+
+        if (!email) {
+            setEmailError('Please enter Email')
+            isValid = false
+        } else if (!validateEmail(email)) {
+            setEmailError('Please enter a valid Email')
+            isValid = false
+        } else {
+            setEmailError('')
+        }
+
+        if (isValid) {
+            dispatch({
+                type: actions.REGISTER_USER,
+                payload: {
+                    id: id,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    mobileNumber: number,
+                },
+            })
+        }
+    }
     return (
         <SafeAreaView
             style={[styles.area, { backgroundColor: colors.background }]}
@@ -120,25 +171,42 @@ const FillYourProfile = ({ navigation }) => {
                             id="firstName"
                             placeholder="First Name"
                             placeholderTextColor={COLORS.gray}
-                            onChangeText={(e) => setFirstName(e)}
+                            onChangeText={(value) => setFirstName(value)}
                         />
+                        {firstNameError ? (
+                            <Text style={{ color: 'red' }}>
+                                {firstNameError}
+                            </Text>
+                        ) : null}
                         <Input
                             id="lastName"
                             placeholder="Last Name"
                             placeholderTextColor={COLORS.gray}
+                            value={lastName}
+                            onChangeText={(value) => setLastName(value)}
                         />
+                        {lastNameError ? (
+                            <Text style={{ color: 'red' }}>
+                                {lastNameError}
+                            </Text>
+                        ) : null}
                         <Input
                             id="email"
                             placeholder="Email"
                             placeholderTextColor={COLORS.gray}
                             keyboardType="email-address"
+                            value={email}
+                            onChangeText={(value) => setEmail(value)}
                         />
+                        {emailError ? (
+                            <Text style={{ color: 'red' }}>{emailError}</Text>
+                        ) : null}
                         <Input
                             id="mobile"
                             placeholder="Mobile Number"
                             placeholderTextColor={COLORS.gray}
-                            keyboardType="mobile-number"
                             editable={false}
+                            value={number}
                         />
                     </View>
                 </ScrollView>
@@ -165,7 +233,7 @@ const FillYourProfile = ({ navigation }) => {
                     title="Continue"
                     filled
                     style={styles.continueButton}
-                    onPress={() => navigation.navigate('CreateNewPIN')}
+                    onPress={handleSubmit}
                 />
             </View>
         </SafeAreaView>
