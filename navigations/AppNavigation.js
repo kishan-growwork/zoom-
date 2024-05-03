@@ -134,16 +134,16 @@ const AppNavigation = () => {
     if (isLoading) {
         return null
     }
-console.info('----------------------------');
-console.info('isLogin =>', isLogin);
-console.info('----------------------------');
+    console.info('----------------------------')
+    console.info('isLogin =>', isLogin)
+    console.info('----------------------------')
     return (
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
                 // replace the second onboaring1 with login in order to make the user not to see the onboarding
                 // when login the next time
-                initialRouteName={isFirstLaunch ? 'Onboarding1' : 'Login'}
+                initialRouteName="Onboarding2"
             >
                 {!isLogin ? (
                     <>

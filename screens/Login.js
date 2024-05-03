@@ -26,63 +26,28 @@ import { useTheme } from '../theme/ThemeProvider'
 import { Ionicons } from '@expo/vector-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import actions from '../redux/auth/actions'
-import * as WebBrowser from 'expo-web-browser'
-import * as Google from 'expo-auth-session/providers/google'
+// import * as WebBrowser from 'expo-web-browser'
+// import * as Google from 'expo-auth-session/providers/google'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// Google Certificate Fingerprint:     65:BA:8E:9E:A6:67:E2:A7:F6:D8:B8:34:F8:4D:C5:EB:D1:A0:74:C6
-// Google Certificate Hash (SHA-1):    65BA8E9EA667E2A7F6D8B834F84DC5EBD1A074C6
-// Google Certificate Hash (SHA-256):  30DA080B78E0C98A0E8794FC8C3ED90F86E7FA30C6B48789BA18E17993D463E4
-// Facebook Key Hash:                  ZbqOnqZn4qf22Lg0+E3F69GgdMY=
-
 import { AuthSession } from 'expo-auth-session'
-// import * as Google from 'expo-auth-session/providers/google'
-const isTestMode = true
-WebBrowser.maybeCompleteAuthSession()
-// const redirectUri = AuthSession.makeRedirectUri()
-const Login = ({ navigation }) => {
-    const [userInfo, setUserInfo] = useState()
-    console.info('----------------------------')
-    console.info('userInfo =>', userInfo)
-    console.info('----------------------------')
-    const [req, res, promptAsync] = Google.useAuthRequest({
-        // redirectUri,
-        androidClientId:
-            '723432648509-s3npla8jo8jcfh321cl4bt78q1nbo0hh.apps.googleusercontent.com',
-        iosClientId:
-            '723432648509-qmaibcehse0f8kuv3kbigj4h5a30ete7.apps.googleusercontent.com',
-        webClientId:
-            '723432648509-hq2oh8eghobdervn0cqj999iq4edfi9e.apps.googleusercontent.com',
-    })
-    const getUserInfo = async (token) => {
-        if (!token) return
-        try {
-            const resp = await fetch(
-                'https://www.googleapis.com/userinfo/v2/me',
-                {
-                    headers: { Authorization: 'Bearer ' + token },
-                }
-            )
+import GoogleLogin from '../components/Auth'
 
-            const user = await resp.json()
-            await AsyncStorage.setItem('user', user)
-            setUserInfo(user)
-        } catch (err) {}
-    }
-    async function handleSignInWithGoogle() {
-        const user = AsyncStorage.getItem('user')
+const isTestMode = true
+// WebBrowser.maybeCompleteAuthSession()
+
+const Login = ({ navigation }) => {
+    // const [request, response, promptAsync] = Google.useAuthRequest({
+    //     // redirectUri: 'http://localhost:8081/',
+    //     androidClientId:
+    //         '7815137124-5scqbtat2q61qu5fg5q0dn50lel17bns.apps.googleusercontent.com',
  
-        if (!user.length > 0) {
-            if (res?.type === 'success') {
-                await getUserInfo(res?.authentication?.accessToken)
-            }
-        } else {
-            setUserInfo(JSON.parse(user))
-        }
-    }
-    useEffect(() => {
-        handleSignInWithGoogle()
-    }, [res])
+    //     // iosClientId:
+    //     //     '723432648509-qmaibcehse0f8kuv3kbigj4h5a30ete7.apps.googleusercontent.com',
+    //     // webClientId:
+    //     //     '723432648509-hq2oh8eghobdervn0cqj999iq4edfi9e.apps.googleusercontent.com',
+    // })
+
     const [mobile, setMobile] = useState()
     const auth = useSelector((state) => state.auth)
 
@@ -210,8 +175,6 @@ const Login = ({ navigation }) => {
         }
     }, [error])
 
-    const googleAuthHandler = async () => {}
-
     return (
         <SafeAreaView
             style={[
@@ -328,13 +291,13 @@ const Login = ({ navigation }) => {
                         </Text>
                     </TouchableOpacity>
                     <View>
-                        <Text>{JSON.stringify(userInfo)}</Text>
                         <OrSeparator text="or continue with" />
                         <View style={styles.socialBtnContainer}>
-                            <SocialButton
+                            <GoogleLogin />
+                            {/* <SocialButton
                                 icon={icons.google}
-                                onPress={() => promptAsync()}
-                            />
+                                // onPress={() => promptAsync()}
+                            /> */}
                         </View>
                     </View>
                 </ScrollView>

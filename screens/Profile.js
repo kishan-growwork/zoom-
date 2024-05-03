@@ -405,7 +405,7 @@ const Profile = ({ navigation }) => {
                             clearStorage()
                             // // refRBSheet.current.close()
                             dispatch({ type: actions.LOG_OUT })
-                            // navigation.navigate('')
+                             navigation.navigate('')
                         }}
                     />
                 </View>

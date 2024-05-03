@@ -27,7 +27,7 @@
         "web": {
             "favicon": "./assets/images/favicon.png"
         },
-        "plugins": ["expo-font"],
+        "plugins": ["expo-font", "@react-native-google-signin/google-signin"],
         "extra": {
             "eas": {
                 "projectId": "75aa0421-9fff-4c2f-a2c0-6430745b7c0e"

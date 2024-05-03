@@ -277,9 +277,20 @@ const taco2 = require('../assets/icons/taco2.png')
 const vegetable = require('../assets/icons/vegetable.png')
 const vegetable2 = require('../assets/icons/vegetable2.png')
 const moto = require('../assets/icons/moto.png')
-
+const veg = require('../assets/icons/veg.png')
+const nonVeg = require('../assets/icons/nonveg.png')
+const toprated = require('../assets/icons/toprated.png')
+const bestseller = require('../assets/icons/bestseller.png')
+const onion = require('../assets/icons/onion.png')
+const spicy = require('../assets/icons/spicy.png')
 export default {
+    spicy,
+    onion,
+    bestseller,
+    toprated,
+    nonVeg,
     addFileOutline,
+    veg,
     addFile,
     arrowBack,
     arrowDown,

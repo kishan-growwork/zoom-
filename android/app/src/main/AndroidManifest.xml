@@ -28,6 +28,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="zoom-plus"/>
         <data android:scheme="com.kishangrowwork.zoomplus"/>
       </intent-filter>
     </activity>
