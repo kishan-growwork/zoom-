@@ -3,11 +3,11 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import ENV from '../env'
 
-let env = String(process.env.REACT_APP_ENVIRONMENT)
+let env = String(process.env.REACT_APP_ENVIRONMENT) || "LOCAL"
 console.info('----------------------------')
 console.info('env =>', env)
 console.info('----------------------------')
-let SERVER_URL = ENV[env].API_BASE_URL
+let SERVER_URL = ENV[env]?.API_BASE_URL || "http://192.168.29.130:7000/api/"
 console.info('----------------------------')
 console.info('SERVER_URL =>', SERVER_URL)
 console.info('----------------------------')
