@@ -59,7 +59,7 @@ const Login = ({ navigation }) => {
     console.info('----------------------------')
     const [areas, setAreas] = useState([])
     const [selectedArea, setSelectedArea] = useState(null)
-
+    const [mobileError, setMobileError] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
 
     const [error, setError] = useState(null)
@@ -67,13 +67,30 @@ const Login = ({ navigation }) => {
     const { colors, dark } = useTheme()
 
     const dispatch = useDispatch()
-    const handleLoginPress = () => {
-        dispatch({
-            type: actions.SET_NUMBER,
-            payload: { mobileNumber: `${selectedArea.callingCode}${mobile}` },
-        })
-        navigation.navigate('OTPVerification')
-    }
+      const handleLoginPress = () => {
+          let isValid = true
+
+          if (!mobile) {
+              setMobileError('Please enter Mobile Number')
+              isValid = false
+          } else if (mobile.length !== 10) {
+              setMobileError('Please enter a valid Mobile Number')
+              isValid = false
+          } else {
+              setMobileError('Please enter Mobile Number')
+          }
+
+          if (isValid) {
+              dispatch({
+                  type: actions.SET_NUMBER,
+                  payload: {
+                      mobileNumber: `${selectedArea.callingCode}${mobile}`,
+                      navigation: navigation,
+                  },
+              })
+              navigation.navigate('OTPVerification')
+          }
+      }
     function RenderAreasCodesModal() {
         const renderItem = ({ item }) => {
             return (
@@ -285,6 +302,11 @@ const Login = ({ navigation }) => {
                             onChangeText={(value) => setMobile(value)}
                         />
                     </View>
+                    {mobileError ? (
+                        <Text style={{ color: 'red', textAlign: 'center' }}>
+                            {mobileError}
+                        </Text>
+                    ) : null}
                     {RenderAreasCodesModal()}
                     <Button
                         title="Login"
