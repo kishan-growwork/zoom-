@@ -10,6 +10,7 @@ import {
     Modal,
     TouchableWithoutFeedback,
     FlatList,
+    ActivityIndicator,
 } from 'react-native'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -41,16 +42,21 @@ const Login = ({ navigation }) => {
     //     // redirectUri: 'http://localhost:8081/',
     //     androidClientId:
     //         '7815137124-5scqbtat2q61qu5fg5q0dn50lel17bns.apps.googleusercontent.com',
- 
+
     //     // iosClientId:
     //     //     '723432648509-qmaibcehse0f8kuv3kbigj4h5a30ete7.apps.googleusercontent.com',
     //     // webClientId:
     //     //     '723432648509-hq2oh8eghobdervn0cqj999iq4edfi9e.apps.googleusercontent.com',
     // })
-
+    const [loading, setLoading] = useState(false)
+    console.info('----------------------------')
+    console.info('loading =>', loading)
+    console.info('----------------------------')
     const [mobile, setMobile] = useState()
     const auth = useSelector((state) => state.auth)
-
+    console.info('----------------------------')
+    console.info('auth =>', auth)
+    console.info('----------------------------')
     const [areas, setAreas] = useState([])
     const [selectedArea, setSelectedArea] = useState(null)
 
@@ -266,7 +272,12 @@ const Login = ({ navigation }) => {
                         {/* Phone Number Text Input */}
                         <TextInput
                             value={mobile}
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    color: dark ? COLORS.white : COLORS.black,
+                                },
+                            ]}
                             placeholder="Enter your phone number"
                             placeholderTextColor={COLORS.gray}
                             selectionColor="#111"
@@ -293,7 +304,11 @@ const Login = ({ navigation }) => {
                     <View>
                         <OrSeparator text="or continue with" />
                         <View style={styles.socialBtnContainer}>
-                            <GoogleLogin />
+                            <GoogleLogin
+                                navigation={navigation}
+                                loading={loading}
+                                setLoading={setLoading}
+                            />
                             {/* <SocialButton
                                 icon={icons.google}
                                 // onPress={() => promptAsync()}
@@ -301,6 +316,11 @@ const Login = ({ navigation }) => {
                         </View>
                     </View>
                 </ScrollView>
+                {loading && (
+                    <View style={styles.loader}>
+                        <ActivityIndicator size="large" color="red" />
+                    </View>
+                )}
                 {/* <View style={styles.bottomContainer}>
                     <Text
                         style={[
@@ -324,6 +344,12 @@ const Login = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    loader: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     downIcon: {
         width: 10,
         height: 10,
@@ -355,7 +381,6 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         height: 40,
         fontSize: 14,
-        color: COLORS.white,
     },
     area: {
         flex: 1,

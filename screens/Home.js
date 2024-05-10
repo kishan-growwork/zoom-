@@ -17,19 +17,30 @@ import SubHeaderItem from '../components/SubHeaderItem'
 import Category from '../components/Category'
 import VerticalFoodCard from '../components/VerticalFoodCard'
 import HorizontalFoodCard from '../components/HorizontalFoodCard'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import actions from '../redux/Home/actions'
+import Restaurantslist from '../components/Restaurantslist'
 
 const Home = ({ navigation }) => {
+    const dispatch = useDispatch()
     const [currentIndex, setCurrentIndex] = useState(0)
     const { dark, colors } = useTheme()
     const { user } = useSelector((state) => state.auth)
+    const home = useSelector((state) => state.home)
     console.info('----------------------------')
-    console.info('user =>', user)
+    console.info('home =>', home)
     console.info('----------------------------')
     /**
      * render header
      */
-
+    useEffect(() => {
+        dispatch({
+            type: actions.GET_FOODS_CATEGORIES,
+        })
+        dispatch({
+            type: actions.GET_MERCHANTS_LISTS,
+        })
+    }, [])
     const renderHeader = () => {
         return (
             <View style={styles.headerContainer}>
@@ -219,14 +230,14 @@ const Home = ({ navigation }) => {
                     onPress={() => navigation.navigate('Categories')}
                 />
                 <FlatList
-                    data={categories.slice(0, 8)}
+                    data={home?.categories?.slice(0, 8)}
                     keyExtractor={(item, index) => index.toString()}
                     horizontal={false}
                     numColumns={4} // Render two items per row
                     renderItem={({ item, index }) => (
                         <Category
-                            name={item.name}
-                            icon={item.icon}
+                            name={item?.name}
+                            icon={item?.image}
                             backgroundColor={dark ? COLORS.dark2 : COLORS.white}
                             onPress={
                                 item.onPress
@@ -277,6 +288,48 @@ const Home = ({ navigation }) => {
                                     fee={item.fee}
                                     rating={item.rating}
                                     numReviews={item.numReviews}
+                                    onPress={() =>
+                                        navigation.navigate('FoodDetails')
+                                    }
+                                />
+                            )
+                        }}
+                    />
+                </View>
+            </View>
+        )
+    }
+
+    const renderAllRestaurants = () => {
+        return (
+            <View>
+                <SubHeaderItem
+                    title="All Restaurants"
+                    // navTitle="See all"
+                    // onPress={() => navigation.navigate('DiscountFoods')}
+                />
+                <View
+                    style={{
+                        backgroundColor: dark ? COLORS.dark1 : COLORS.white,
+                        marginVertical: 16,
+                    }}
+                >
+                    <FlatList
+                        data={home?.merchants}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => {
+                            return (
+                                <Restaurantslist
+                                    name={item?.name}
+                                    image={item?.images}
+                                    cuisines={item?.cuisines}
+                                    address={item?.address}
+                                    distance={item.distance}
+                                    price={item.price}
+                                    fee={item.fee}
+                                    rating={item?.rating}
+                                    numReviews={item.numReviews}
+                                    isPromo={item.isPromo}
                                     onPress={() =>
                                         navigation.navigate('FoodDetails')
                                     }
@@ -405,7 +458,8 @@ const Home = ({ navigation }) => {
                     {renderSearchBar()}
                     {renderBanner()}
                     {renderCategories()}
-                    {renderDiscountedFoods()}
+                    {renderAllRestaurants()}
+                    {/* {renderDiscountedFoods()} */}
                     {renderRecommendedFoods()}
                 </ScrollView>
             </View>

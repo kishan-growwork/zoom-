@@ -28,19 +28,138 @@ import { useDispatch, useSelector } from 'react-redux'
 import actions from '../redux/auth/actions'
 
 const FillYourProfile = ({ navigation }) => {
+    const [areas, setAreas] = useState([])
+    const [selectedArea, setSelectedArea] = useState(null)
+
+    const [modalVisible, setModalVisible] = useState(false)
     const dispatch = useDispatch()
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [email, setEmail] = useState('')
+
     const [image, setImage] = useState(null)
     const [firstNameError, setFirstNameError] = useState('')
     const [lastNameError, setLastNameError] = useState('')
     const [emailError, setEmailError] = useState('')
-    const number = useSelector((state) => state.auth?.user?.mobileNumber)
+    const [mobileError, setMobileError] = useState('')
+    const auth = useSelector((state) => state.auth)
     const id = useSelector((state) => state.auth?.user?.id)
     console.info('----------------------------')
     console.info('id =>', id)
     console.info('----------------------------')
+    console.info('----------------------------')
+    console.info('auth =>', auth)
+    console.info('----------------------------')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [mobile, setMobile] = useState()
+
+    useEffect(() => {
+        fetch('https://restcountries.com/v2/all')
+            .then((response) => response.json())
+            .then((data) => {
+                let areaData = data.map((item) => {
+                    return {
+                        code: item.alpha2Code,
+                        item: item.name,
+                        callingCode: `+${item.callingCodes[0]}`,
+                        flag: `https://flagsapi.com/${item.alpha2Code}/flat/64.png`,
+                    }
+                })
+
+                setAreas(areaData)
+                if (areaData.length > 0) {
+                    let defaultData = areaData.filter((a) => a.code == 'IN')
+
+                    if (defaultData.length > 0) {
+                        setSelectedArea(defaultData[0])
+                    }
+                }
+            })
+    }, [])
+    function RenderAreasCodesModal() {
+        const renderItem = ({ item }) => {
+            return (
+                <TouchableOpacity
+                    style={{
+                        padding: 10,
+                        flexDirection: 'row',
+                    }}
+                    onPress={() => {
+                        setSelectedArea(item), setModalVisible(false)
+                    }}
+                >
+                    <Image
+                        source={{ uri: item.flag }}
+                        contentFit="contain"
+                        style={{
+                            height: 30,
+                            width: 30,
+                            marginRight: 10,
+                        }}
+                    />
+                    <Text style={{ fontSize: 16, color: '#fff' }}>
+                        {item.item}
+                    </Text>
+                </TouchableOpacity>
+            )
+        }
+
+        return (
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+            >
+                <TouchableWithoutFeedback
+                    onPress={() => setModalVisible(false)}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <View
+                            style={{
+                                height: SIZES.height,
+                                width: SIZES.width,
+                                backgroundColor: COLORS.primary,
+                                borderRadius: 12,
+                            }}
+                        >
+                            <TouchableOpacity
+                                onPress={() => setModalVisible(false)}
+                                style={styles.closeBtn}
+                            >
+                                <Ionicons
+                                    name="close-outline"
+                                    size={24}
+                                    color={COLORS.primary}
+                                />
+                            </TouchableOpacity>
+                            <FlatList
+                                data={areas}
+                                renderItem={renderItem}
+                                horizontal={false}
+                                keyExtractor={(item) => item.code}
+                                style={{
+                                    padding: 20,
+                                    marginBottom: 20,
+                                }}
+                            />
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+        )
+    }
+    useEffect(() => {
+        if (auth?.user?.isGoogleLogin == true) {
+            const { user } = auth
+            setEmail(user?.email)
+            setFirstName(user?.name)
+        }
+    }, [auth?.user])
     // const [areas, setAreas] = useState([])
     // const [selectedArea, setSelectedArea] = useState(null)
     // const [modalVisible, setModalVisible] = useState(false)
@@ -93,7 +212,7 @@ const FillYourProfile = ({ navigation }) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         return regex.test(email)
     }
-    const handleSubmit = () => {
+    const handleSubmitWithOTP = () => {
         let isValid = true
 
         if (!firstName) {
@@ -128,9 +247,39 @@ const FillYourProfile = ({ navigation }) => {
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
-                    mobileNumber: number,
+                    mobileNumber: auth?.user?.mobileNumber,
                 },
             })
+        }
+    }
+
+    const handleSubmitWithGoogleLogin = () => {
+        let isValid = true
+
+        if (!mobile) {
+            setMobileError('Please enter Mobile Number')
+            isValid = false
+        } else if (mobile.length !== 10) {
+            setMobileError('Please enter a valid Mobile Number')
+            isValid = false
+        } else {
+            setMobileError('Please enter Mobile Number')
+        }
+
+        if (isValid) {
+            dispatch({
+                type: actions.REGISTER_USER_FOR_GOOGLE,
+                payload: {
+                    mobileNumber: mobile,
+                },
+            })
+        }
+    }
+    const handleSubmit = () => {
+        if (auth?.user?.isGoogleLogin == true) {
+            handleSubmitWithGoogleLogin()
+        } else {
+            handleSubmitWithOTP()
         }
     }
     return (
@@ -168,6 +317,9 @@ const FillYourProfile = ({ navigation }) => {
                     >
                         <Input
                             value={firstName}
+                            editable={
+                                auth?.user?.isGoogleLogin == true ? false : true
+                            }
                             id="firstName"
                             placeholder="First Name"
                             placeholderTextColor={COLORS.gray}
@@ -178,20 +330,28 @@ const FillYourProfile = ({ navigation }) => {
                                 {firstNameError}
                             </Text>
                         ) : null}
-                        <Input
-                            id="lastName"
-                            placeholder="Last Name"
-                            placeholderTextColor={COLORS.gray}
-                            value={lastName}
-                            onChangeText={(value) => setLastName(value)}
-                        />
-                        {lastNameError ? (
-                            <Text style={{ color: 'red' }}>
-                                {lastNameError}
-                            </Text>
-                        ) : null}
+                        {auth?.user?.isGoogleLogin == true ? null : (
+                            <>
+                                <Input
+                                    id="lastName"
+                                    placeholder="Last Name"
+                                    placeholderTextColor={COLORS.gray}
+                                    value={lastName}
+                                    onChangeText={(value) => setLastName(value)}
+                                />
+                                {lastNameError ? (
+                                    <Text style={{ color: 'red' }}>
+                                        {lastNameError}
+                                    </Text>
+                                ) : null}
+                            </>
+                        )}
+
                         <Input
                             id="email"
+                            editable={
+                                auth?.user?.isGoogleLogin == true ? false : true
+                            }
                             placeholder="Email"
                             placeholderTextColor={COLORS.gray}
                             keyboardType="email-address"
@@ -201,13 +361,99 @@ const FillYourProfile = ({ navigation }) => {
                         {emailError ? (
                             <Text style={{ color: 'red' }}>{emailError}</Text>
                         ) : null}
-                        <Input
-                            id="mobile"
-                            placeholder="Mobile Number"
-                            placeholderTextColor={COLORS.gray}
-                            editable={false}
-                            value={number}
-                        />
+                        {auth?.user?.isGoogleLogin == true ? (
+                            <>
+                                <View
+                                    style={[
+                                        styles.inputContainer,
+                                        {
+                                            backgroundColor: dark
+                                                ? COLORS.dark2
+                                                : COLORS.greyscale500,
+                                            borderColor: dark
+                                                ? COLORS.dark2
+                                                : COLORS.greyscale500,
+                                        },
+                                    ]}
+                                >
+                                    <TouchableOpacity
+                                        style={styles.selectFlagContainer}
+                                        onPress={() => setModalVisible(true)}
+                                    >
+                                        <View
+                                            style={{ justifyContent: 'center' }}
+                                        >
+                                            <Image
+                                                source={icons.down}
+                                                resizeMode="contain"
+                                                style={styles.downIcon}
+                                            />
+                                        </View>
+                                        <View
+                                            style={{
+                                                justifyContent: 'center',
+                                                marginLeft: 5,
+                                            }}
+                                        >
+                                            <Image
+                                                source={{
+                                                    uri: selectedArea?.flag,
+                                                }}
+                                                contentFit="contain"
+                                                style={styles.flagIcon}
+                                            />
+                                        </View>
+                                        <View
+                                            style={{
+                                                justifyContent: 'center',
+                                                marginLeft: 5,
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color: dark
+                                                        ? COLORS.white
+                                                        : '#111',
+                                                    fontSize: 12,
+                                                }}
+                                            >
+                                                {selectedArea?.callingCode}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    {/* Phone Number Text Input */}
+                                    <TextInput
+                                        value={mobile}
+                                        style={[
+                                            styles.input,
+                                            {
+                                                color: dark
+                                                    ? COLORS.white
+                                                    : COLORS.black,
+                                            },
+                                        ]}
+                                        placeholder="Enter your phone number"
+                                        placeholderTextColor={COLORS.gray}
+                                        selectionColor="#111"
+                                        keyboardType="numeric"
+                                        onChangeText={(value) =>
+                                            setMobile(value)
+                                        }
+                                    />
+                                </View>
+                                {RenderAreasCodesModal()}
+                            </>
+                        ) : (
+                            <>
+                                <Input
+                                    id="mobile"
+                                    placeholder="Mobile Number"
+                                    placeholderTextColor={COLORS.gray}
+                                    editable={false}
+                                    value={auth?.user?.mobileNumber}
+                                />
+                            </>
+                        )}
                     </View>
                 </ScrollView>
             </View>

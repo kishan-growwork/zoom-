@@ -11,3 +11,11 @@ export const verifyOTPAPI = async (payload) => {
 export const registerUserAPI = async (payload) => {
     return await apiCall.post('user/auth/registerUser', payload)
 }
+
+export const checkRegisterUserforGoogleAPI = async () => {
+    return await apiCall.get('user/auth/checkIsRegisterGoogleUser')
+}
+
+export const registerUserforGoogleAPI = async (payload) => {
+    return await apiCall.post('user/auth/registerUserGoogle', payload)
+}

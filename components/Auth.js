@@ -6,8 +6,12 @@ import {
 import { useState } from 'react'
 import SocialButton from './SocialButton'
 import { icons } from '../constants'
+import { storeData } from '../helper'
+import { useDispatch } from 'react-redux'
+import actions from '../redux/auth/actions'
 
-export default function GoogleLogin() {
+export default function GoogleLogin({ navigation, loading, setLoading }) {
+    const dispatch = useDispatch()
     GoogleSignin.configure({
         scopes: ['email', 'openid', 'profile'],
         webClientId:
@@ -19,6 +23,7 @@ export default function GoogleLogin() {
 
     const handleClickSignIn = async () => {
         try {
+            setLoading(true)
             await GoogleSignin.hasPlayServices()
             const userInfo = await GoogleSignin.signIn()
             //   setState({ userInfo });
@@ -26,10 +31,23 @@ export default function GoogleLogin() {
             console.info('-------------------------------')
             console.info('userInfo => ', userInfo)
             console.info('-------------------------------')
+            dispatch({
+                type: actions?.SET_AUTH_STATE,
+                payload: {
+                    user: userInfo?.user,
+                    loading,
+                    setLoading,
+                },
+            })
+            storeData('idToken', userInfo?.idToken)
+            dispatch({
+                type: actions.CHEK_REGISTER_USER_FOR_GOOGLE,
+                payload: { navigation, loading, setLoading },
+            })
         } catch (err) {
-            console.info('----------------------------');
-            console.info('err =>', err);
-            console.info('----------------------------');
+            console.info('----------------------------')
+            console.info('err =>', err)
+            console.info('----------------------------')
         }
     }
 

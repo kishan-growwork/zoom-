@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { clearStorage } from '../helper'
 import { useDispatch } from 'react-redux'
 import actions from '../redux/auth/actions'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
 
 const Profile = ({ navigation }) => {
     const dispatch = useDispatch()
@@ -402,10 +403,12 @@ const Profile = ({ navigation }) => {
                         filled
                         style={styles.logoutButton}
                         onPress={() => {
+                            GoogleSignin.signOut()
                             clearStorage()
                             // // refRBSheet.current.close()
-                            dispatch({ type: actions.LOG_OUT })
-                             navigation.navigate('')
+                            dispatch({
+                                type: actions.LOG_OUT,
+                            })
                         }}
                     />
                 </View>

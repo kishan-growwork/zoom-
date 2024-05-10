@@ -1,4 +1,4 @@
-rootProject.name = 'Zoom +'
+rootProject.name = 'Zoom-plus'
 
 dependencyResolutionManagement {
   versionCatalogs {

@@ -1,6 +1,6 @@
 const ENV = {
     PRODUCTION: {
-        API_BASE_URL: 'http://192.168.29.56:7000/api/',
+        API_BASE_URL: 'http://192.168.29.130:7000/api/',
     },
     DEVELOPMENT: {
         API_BASE_URL:
